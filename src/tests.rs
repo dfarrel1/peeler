@@ -10,7 +10,12 @@ mod tests {
 
     #[test]
     fn test_extract_udp_fields() {
-        let filepath = "/Users/dene/src/github.com/dds-magic-garden/daedalus-vampires/synthesizers/data/trace-2023-04-08_single_packet.pcap";    
+        let current_file_path = Path::new(file!());
+        let parent_directory = current_file_path.parent().expect("Failed to get parent directory");
+        let relative_path = parent_directory.join("../data/samples/tcp_packet.pcap");
+        // let relative_path = parent_directory.join("../data/samples/udp_packet.pcap");
+        let filepath_buf = relative_path.canonicalize().expect("Failed to get canonical path");
+        let filepath = filepath_buf.to_str().expect("Path is not valid UTF-8");
         let mut cap = Capture::from_file(filepath).unwrap();
         let packet = cap.next_packet().unwrap();
         let packet = Packet::new(packet.header, packet.data);
