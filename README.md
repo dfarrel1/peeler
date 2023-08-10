@@ -10,7 +10,7 @@ for packets moving over a LAN:
     - ip address
     - send/receive ports
     - raw message
-- prepare to hand off this information to a downstream processor that takes the pcap parts and outputs a new deserialized data (using the ip address, ports, can protocol the downstream processor will deserialize the raw message to a new format). We can expect that this crate will be used in a larger rust project as a constituent component, rather than needing to add functionality for sending the data somewhere.
+- prepare to hand off this information to a downstream processor that takes the pcap parts and outputs a new deserialized data (using the ip address, ports, and protocol the downstream processor will deserialize the raw message to a new format). We can expect that this crate will be used in a larger rust project as a constituent component, rather than needing to add functionality for sending the data somewhere.
 
 >> NOTE: we included some additional packet metadata in case it might be useful in the future, but only the information described above is essential at this point in the project.
 
