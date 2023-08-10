@@ -1,0 +1,22 @@
+# Rust
+/target
+/Cargo.lock
+*/target/
+**/debug
+
+
+# Editor/IDE specific
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Miscellaneous
+.DS_Store
+*.log
+*.swp
+*~
+
+# Data
+data/**

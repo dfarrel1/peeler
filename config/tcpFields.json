@@ -1,0 +1,44 @@
+{
+    "payload_types":
+    [   
+        {
+            "block":
+            {
+                "whatami": "All the fields we take from the block",
+                "caplen": "integer",
+                "origlen": "integer",
+                "ts_sec": "integer",
+                "ts_usec": "integer"
+            }
+        },
+        {
+            "slice": 
+            {
+                "whatami": "All the fields we take from the slice",
+                "ip": {
+                    "more_fragments": "boolean",
+                    "fragments_offset": "integer",
+                    "source": "[integer]",
+                    "destination": "[integer]",
+                    "id": "integer",
+                    "payload_len": "integer"
+                },
+                "link": {
+                    "source": "[integer]",
+                    "destination": "[integer]",
+                    "ether_type": "integer"
+                },
+                "transport": {
+                    "source_port": "integer",
+                    "destination_port": "integer",
+                    "length": "integer"
+                },
+                "payload": "[integer]",
+                "vlan": {
+                    "vlan_identifier": "integer",
+                    "ether_type": "integer"
+                }
+            }
+        }
+    ]
+}
