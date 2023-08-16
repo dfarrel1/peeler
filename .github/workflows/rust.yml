@@ -10,7 +10,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  TEST_DATA_PATH: data/samples
+  TEST_DATA_PATH: bare/data/samples
 
 jobs:
   fmt:
@@ -33,6 +33,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: List contents of the current directory
+      run: ls -al
     - name: Cache Cargo registry
       uses: actions/cache@v2
       with:
