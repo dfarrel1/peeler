@@ -9,7 +9,8 @@ pub mod lib {
     pub mod getudp;
 }
 
-pub use lib::create_test_packet::create_test_packet;
+pub use lib::create_test_packet::create_test_tcp_packet;
+pub use lib::create_test_packet::create_test_udp_packet;
 pub use lib::getheader::extract_offset_and_ipheader;
 pub use lib::getipfields::{extract_ethernet_ip_fields, extract_ipv4_fields, extract_ipv6_fields};
 pub use lib::getpcapheader::extract_pcap_header_info;

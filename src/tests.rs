@@ -1,8 +1,9 @@
 #[cfg(test)]
-mod tests {
+mod unittests {
+    use crate::lib::create_test_packet::create_test_tcp_packet;
+    use crate::lib::create_test_packet::create_test_udp_packet;
     use crate::lib::gettcp::extract_tcp_fields;
     use crate::lib::getudp::extract_udp_fields;
-    use crate::utils::create_test_packet::create_test_packet;
     use libc::timeval;
     use pcap::PacketHeader;
     use pcap::{Capture, Packet};
@@ -12,13 +13,12 @@ mod tests {
     };
 
     #[test]
-    fn test_extract_udp_fields() {
+    fn test_extract_udp_fields_against_sample_file() {
         let current_file_path = Path::new(file!());
         let parent_directory = current_file_path
             .parent()
             .expect("Failed to get parent directory");
-        let relative_path = parent_directory.join("../data/samples/tcp_packet.pcap");
-        // let relative_path = parent_directory.join("../data/samples/udp_packet.pcap");
+        let relative_path = parent_directory.join("../data/samples/udp_packet.pcap");
         let filepath_buf = relative_path
             .canonicalize()
             .expect("Failed to get canonical path");
@@ -26,11 +26,111 @@ mod tests {
         let mut cap = Capture::from_file(filepath).unwrap();
         let packet = cap.next_packet().unwrap();
         let packet = Packet::new(packet.header, packet.data);
-        let udp_header_json = match extract_udp_fields(packet.clone()) {
-            Ok(fields) => serde_json::to_string_pretty(&fields).unwrap(),
-            Err(err) => format!("Error extracting UDP header fields: {}", err),
+
+        // Call the function under test
+        let result = extract_udp_fields(packet.clone());
+
+        // Handle the Result
+        match result {
+            Ok(udp_fields) => {
+                // Print the JSON representation
+                let udp_header_json = serde_json::to_string_pretty(&udp_fields).unwrap();
+                println!("udp_header_json: {}", udp_header_json);
+
+                // Add assert statements to compare actual fields to expected values
+                assert_eq!(udp_fields["src_port"].as_u64().unwrap(), 12345);
+                assert_eq!(udp_fields["dst_port"].as_u64().unwrap(), 80);
+                assert_eq!(udp_fields["len"].as_u64().unwrap(), 8);
+                assert_eq!(udp_fields["checksum"].as_u64().unwrap(), 19457);
+            }
+            Err(err) => {
+                // Print an error message
+                println!("Error extracting UDP header fields: {}", err);
+
+                // You can assert here that you were not expecting an error
+                panic!("Test failed due to unexpected error: {}", err);
+            }
+        }
+    }
+
+    #[test]
+    fn test_extract_udp_fields_from_generated_packet() {
+        let packet_data = create_test_udp_packet();
+
+        let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
+        let ts_sec = timestamp.as_secs() as i64;
+        let ts_usec = timestamp.subsec_micros() as i32;
+
+        // Create a PacketHeader struct
+        let header = PacketHeader {
+            ts: timeval {
+                tv_sec: ts_sec,
+                tv_usec: ts_usec,
+            },
+            caplen: packet_data.len() as u32,
+            len: packet_data.len() as u32,
         };
-        println!("udp_header_json: {}", udp_header_json);
+
+        // Create a TestPacket struct with the PacketHeader and a reference to the packet data
+        let test_packet = Packet::new(&header, &packet_data);
+
+        // Call the function under test
+        let result = extract_udp_fields(test_packet);
+
+        // Handle the Result
+        match result {
+            Ok(udp_fields) => {
+                // Add assert statements to compare actual fields to expected values
+                assert_eq!(udp_fields["src_port"].as_u64().unwrap(), 12345);
+                assert_eq!(udp_fields["dst_port"].as_u64().unwrap(), 80);
+                assert_eq!(udp_fields["len"].as_u64().unwrap(), 8);
+                // Add your expected checksum value
+                assert_eq!(udp_fields["checksum"].as_u64().unwrap(), 53528);
+            }
+            Err(err) => {
+                // Print an error message
+                println!("Error extracting UDP header fields: {}", err);
+                // You can assert here that you were not expecting an error
+                panic!("Test failed due to unexpected error: {}", err);
+            }
+        }
+    }
+
+    #[test]
+    fn test_extract_tcp_fields_against_sample_file() {
+        let current_file_path = Path::new(file!());
+        let parent_directory = current_file_path
+            .parent()
+            .expect("Failed to get parent directory");
+        let relative_path = parent_directory.join("../data/samples/tcp_packet.pcap");
+        let filepath_buf = relative_path
+            .canonicalize()
+            .expect("Failed to get canonical path");
+        let filepath = filepath_buf.to_str().expect("Path is not valid UTF-8");
+        let mut cap = Capture::from_file(filepath).unwrap();
+        let packet = cap.next_packet().unwrap();
+        let packet = Packet::new(packet.header, packet.data);
+
+        // Call the function under test
+        let result = extract_tcp_fields(packet.clone());
+
+        // Handle the Result
+        match result {
+            Ok(tcp_fields) => {
+                // Add assert statements to compare actual fields to expected values
+                assert_eq!(tcp_fields["src_port"].as_u64().unwrap() as u16, 12345);
+                assert_eq!(tcp_fields["dst_port"].as_u64().unwrap() as u16, 80);
+                assert_eq!(tcp_fields["seq_num"].as_u64().unwrap() as u32, 0);
+                assert_eq!(tcp_fields["ack_num"].as_u64().unwrap() as u32, 0);
+                // Add your expected checksum and other values
+            }
+            Err(err) => {
+                // Print an error message
+                println!("Error extracting TCP header fields: {}", err);
+                // You can assert here that you were not expecting an error
+                panic!("Test failed due to unexpected error: {}", err);
+            }
+        }
     }
 
     #[test]
@@ -48,7 +148,7 @@ mod tests {
         //     0x01, 0x02, 0x03, 0x04
         // ];
 
-        let packet_data = create_test_packet();
+        let packet_data = create_test_tcp_packet();
 
         let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
         let ts_sec = timestamp.as_secs() as i64;
