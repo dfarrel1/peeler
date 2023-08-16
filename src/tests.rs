@@ -14,7 +14,6 @@ mod unittests {
     extern crate chrono;
     use chrono::prelude::*;
 
-
     #[test]
     fn test_extract_udp_fields_against_sample_file() {
         let current_file_path = Path::new(file!());
@@ -62,24 +61,26 @@ mod unittests {
         let now = Utc::now();
         let secs = now.timestamp();
         let micros = now.timestamp_micros() as i32;
-
         // let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
-        let mut ts = timeval {            
+        let mut ts = timeval {
             tv_sec: secs,
+            #[cfg(target_arch = "aarch64")]
             tv_usec: micros,
+            #[cfg(not(target_arch = "aarch64"))]
+            tv_usec: micros as i64,
         };
 
         #[cfg(all(target_arch = "aarch64"))]
         {
-            ts = timeval {                
+            ts = timeval {
                 tv_sec: secs,
                 tv_usec: micros as i32,
             };
         }
-                
+
         #[cfg(all(target_arch = "x86_64"))]
         {
-            ts = timeval {                
+            ts = timeval {
                 tv_sec: secs,
                 tv_usec: micros as i64,
             };
@@ -175,22 +176,22 @@ mod unittests {
         let micros = now.timestamp_micros() as i32;
 
         // let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
-        let mut ts = timeval {            
+        let mut ts = timeval {
             tv_sec: secs,
             tv_usec: micros,
         };
 
         #[cfg(all(target_arch = "aarch64"))]
         {
-            ts = timeval {                
+            ts = timeval {
                 tv_sec: secs,
                 tv_usec: micros as i32,
             };
         }
-                
+
         #[cfg(all(target_arch = "x86_64"))]
         {
-            ts = timeval {                
+            ts = timeval {
                 tv_sec: secs,
                 tv_usec: micros as i64,
             };
