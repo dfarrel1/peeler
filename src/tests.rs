@@ -13,19 +13,31 @@ mod unittests {
 
     #[test]
     fn test_extract_udp_fields_against_sample_file() {
-        let current_file_path = Path::new(file!());
-        let parent_directory = current_file_path
-            .parent()
-            .expect("Failed to get parent directory");
-        let relative_path = parent_directory.join("../data/samples/");
-        let relative_path_buf = relative_path
-            .canonicalize()
-            .expect("Failed to get canonical path");
-        let relative_path_str = relative_path_buf.to_str().expect("Path is not valid UTF-8");
-        println!("relative_path_str: {}", relative_path_str);
-        let data_path =
-            std::env::var("TEST_DATA_PATH").unwrap_or_else(|_| relative_path_str.to_string());
+        let data_path = match std::env::var("TEST_DATA_PATH") {
+            Ok(env_path) => {
+                println!("Using data path from environment variable: {}", env_path);
+                env_path
+            }
+            Err(_) => {
+                // If the environment variable is not found, fall back to the local path search
+                let current_file_path = Path::new(file!());
+                let parent_directory = current_file_path
+                    .parent()
+                    .expect("Failed to get parent directory");
+                let relative_path = parent_directory.join("../data/samples/");
+                let relative_path_buf = relative_path
+                    .canonicalize()
+                    .expect("Failed to get canonical path");
+                let relative_path_str =
+                    relative_path_buf.to_str().expect("Path is not valid UTF-8");
+                println!("relative_path_str: {}", relative_path_str);
+
+                relative_path_str.to_string()
+            }
+        };
+
         println!("data_path: {}", data_path);
+
         let filepath = Path::new(&data_path).join("udp_packet.pcap");
         println!("filepath: {}", filepath.display());
 
