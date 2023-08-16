@@ -18,12 +18,16 @@ mod unittests {
             .parent()
             .expect("Failed to get parent directory");
         let relative_path = parent_directory.join("../data/samples/");
-        let filepath_buf = relative_path
+        let relative_path_buf = relative_path
             .canonicalize()
             .expect("Failed to get canonical path");
-        let filepath = filepath_buf.to_str().expect("Path is not valid UTF-8");
-        let data_path = std::env::var("TEST_DATA_PATH").unwrap_or_else(|_| filepath.to_string());
+        let relative_path_str = relative_path_buf.to_str().expect("Path is not valid UTF-8");
+        println!("relative_path_str: {}", relative_path_str);        
+        let data_path = std::env::var("TEST_DATA_PATH").unwrap_or_else(|_| relative_path_str.to_string());
+        println!("data_path: {}", data_path);
         let filepath = Path::new(&data_path).join("udp_packet.pcap");
+        println!("filepath: {}", filepath.display());
+        
 
         let mut cap = Capture::from_file(filepath).unwrap();
         let packet = cap.next_packet().unwrap();
