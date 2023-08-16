@@ -58,23 +58,29 @@ mod unittests {
         let packet_data = create_test_udp_packet();
 
         let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
-        let (ts_sec, ts_usec) = match cfg!(target_arch = "aarch64") {
-            true => (timestamp.as_secs() as i32, timestamp.subsec_micros() as i32),
-            false => (timestamp.as_secs() as i32, timestamp.subsec_micros() as i32),
+        let mut ts = timeval {            
+            tv_sec: timestamp.as_secs() as i64,            
+            tv_usec: timestamp.subsec_micros() as i32,
         };
         
-        // Create a PacketHeader struct
+        #[cfg(target_arch = "aarch64")]
+        {
+            ts = timeval {                
+                tv_sec: timestamp.as_secs() as i64,
+                tv_usec: timestamp.subsec_micros() as i32,
+            };
+        }
+        
+        #[cfg(all(target_arch = "x86_64", target_pointer_width = "32"))]
+        {
+            ts = timeval {                
+                tv_sec: timestamp.as_secs() as i32,
+                tv_usec: timestamp.subsec_micros() as i32,
+            };
+        }
+
         let header = PacketHeader {
-            #[cfg(target_arch = "aarch64")]
-            ts: timeval {                
-                tv_sec: ts_sec as i64,                
-                tv_usec: ts_usec as i32,
-            },
-            #[cfg(all(target_arch = "x86_64", target_pointer_width = "32"))]
-            ts: timeval {                
-                tv_sec: ts_sec as i32,                
-                tv_usec: ts_usec as i32,
-            },
+            ts,
             caplen: packet_data.len() as u32,
             len: packet_data.len() as u32,
         };
@@ -159,25 +165,26 @@ mod unittests {
         let packet_data = create_test_tcp_packet();
 
         let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
-        let ts_sec: i64;
-        let ts_usec: i32;
-
-        #[cfg(target_arch = "x86_64")]
-        {
-            ts_sec = timestamp.as_secs() as i64;
-            ts_usec = timestamp.subsec_micros() as i64;
-        }
+        let mut ts = timeval {            
+            tv_sec: timestamp.as_secs() as i64,            
+            tv_usec: timestamp.subsec_micros() as i32,
+        };
         
         #[cfg(target_arch = "aarch64")]
         {
-            ts_sec = timestamp.as_secs() as i64;   // Change to i64
-            ts_usec = timestamp.subsec_micros() as i32;  // Change to i64
+            ts = timeval {                
+                tv_sec: timestamp.as_secs() as i64,
+                tv_usec: timestamp.subsec_micros() as i32,
+            };
         }
-
-        let ts = timeval {
-            tv_sec: ts_sec,
-            tv_usec: ts_usec,
-        };
+        
+        #[cfg(all(target_arch = "x86_64", target_pointer_width = "32"))]
+        {
+            ts = timeval {                
+                tv_sec: timestamp.as_secs() as i32,
+                tv_usec: timestamp.subsec_micros() as i32,
+            };
+        }
 
         // Create a PacketHeader struct
         let header = PacketHeader {
