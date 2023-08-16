@@ -7,10 +7,7 @@ mod unittests {
     use libc::timeval;
     use pcap::PacketHeader;
     use pcap::{Capture, Packet};
-    use std::{
-        path::Path,
-        time::{SystemTime, UNIX_EPOCH},
-    };
+    use std::path::Path;
     extern crate chrono;
     use chrono::prelude::*;
 
@@ -62,29 +59,13 @@ mod unittests {
         let secs = now.timestamp();
         let micros = now.timestamp_micros() as i32;
         // let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
-        let mut ts = timeval {
+        let ts = timeval {
             tv_sec: secs,
             #[cfg(target_arch = "aarch64")]
             tv_usec: micros,
             #[cfg(not(target_arch = "aarch64"))]
             tv_usec: micros as i64,
         };
-
-        #[cfg(all(target_arch = "aarch64"))]
-        {
-            ts = timeval {
-                tv_sec: secs,
-                tv_usec: micros as i32,
-            };
-        }
-
-        #[cfg(all(target_arch = "x86_64"))]
-        {
-            ts = timeval {
-                tv_sec: secs,
-                tv_usec: micros as i64,
-            };
-        }
 
         let header = PacketHeader {
             ts,
@@ -173,29 +154,14 @@ mod unittests {
 
         let now = Utc::now();
         let secs = now.timestamp();
-        let micros = now.timestamp_micros() as i32;
-
-        // let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
-        let mut ts = timeval {
+        let micros = now.timestamp_micros() as i32;        
+        let ts = timeval {
             tv_sec: secs,
+            #[cfg(target_arch = "aarch64")]
             tv_usec: micros,
+            #[cfg(not(target_arch = "aarch64"))]
+            tv_usec: micros as i64,
         };
-
-        #[cfg(all(target_arch = "aarch64"))]
-        {
-            ts = timeval {
-                tv_sec: secs,
-                tv_usec: micros as i32,
-            };
-        }
-
-        #[cfg(all(target_arch = "x86_64"))]
-        {
-            ts = timeval {
-                tv_sec: secs,
-                tv_usec: micros as i64,
-            };
-        }
 
         // Create a PacketHeader struct
         let header = PacketHeader {
