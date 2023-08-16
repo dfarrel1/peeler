@@ -1,7 +1,7 @@
+use crate::extract_offset_and_ipheader;
+use pcap::Packet;
 use serde_json::{json, Value};
 use std::error::Error;
-use pcap::Packet;
-use crate::extract_offset_and_ipheader;
 // use etherparse::{TcpHeader, TcpHeaderSlice};
 
 pub fn is_tcp_packet(packet: &Packet) -> bool {
@@ -17,7 +17,7 @@ pub fn is_tcp_packet(packet: &Packet) -> bool {
         return false; // Not a TCP packet
     }
 
-    // Extract the TCP header length from the TCP header    
+    // Extract the TCP header length from the TCP header
     let tcp_header_len = ((packet.data[46] & 0xf) << 2) as usize;
 
     // Check if the packet is long enough to contain the TCP header
@@ -40,16 +40,15 @@ fn get_tcp_data_offset(ethernet_header: &[u8], ip_header: &[u8], tcp_header: &[u
     ethernet_header_len + ip_header_len + tcp_header_len
 }
 
-
 pub fn extract_tcp_fields(packet: Packet) -> Result<Value, Box<dyn Error>> {
     let (offset, ip_header) = extract_offset_and_ipheader(packet.clone()).unwrap();
-    let ip_header_len = ip_header.len() as usize;
-    let tcp_header_offset = offset + ip_header_len; 
+    let ip_header_len = ip_header.len();
+    let tcp_header_offset = offset + ip_header_len;
 
     // Ensure the indices used are within the range of the packet data
     if packet.data.len() <= tcp_header_offset + 19 {
         return Err(Box::new(std::io::Error::new(
-            std::io::ErrorKind::InvalidData, 
+            std::io::ErrorKind::InvalidData,
             format!(
                 "Packet data length ({}) is too short. It must be at least {} bytes to contain the Ethernet, IP, and TCP headers.",
                 packet.data.len(),
@@ -58,21 +57,26 @@ pub fn extract_tcp_fields(packet: Packet) -> Result<Value, Box<dyn Error>> {
         )));
     }
 
-    let tcp_header = &packet[tcp_header_offset..tcp_header_offset+20]; 
+    let tcp_header = &packet[tcp_header_offset..tcp_header_offset + 20];
     let _tcp_header_len = get_tcp_header_length(tcp_header);
-    let ethernet_header = &packet[0..14];  // Without VLAN tag
+    let ethernet_header = &packet[0..14]; // Without VLAN tag
     let tcp_data_offset = get_tcp_data_offset(ethernet_header, ip_header, tcp_header);
-
 
     // Ensure the indices used are within the range of the packet data
     if packet.data.len() <= tcp_header_offset + 19 {
         return Err(Box::new(std::io::Error::new(
-            std::io::ErrorKind::InvalidData, 
-            "TCP Header data is incomplete"
+            std::io::ErrorKind::InvalidData,
+            "TCP Header data is incomplete",
         )));
     }
-    let src_port = u16::from_be_bytes([packet.data[tcp_header_offset], packet.data[tcp_header_offset + 1]]);
-    let dst_port = u16::from_be_bytes([packet.data[tcp_header_offset + 2], packet.data[tcp_header_offset + 3]]);
+    let src_port = u16::from_be_bytes([
+        packet.data[tcp_header_offset],
+        packet.data[tcp_header_offset + 1],
+    ]);
+    let dst_port = u16::from_be_bytes([
+        packet.data[tcp_header_offset + 2],
+        packet.data[tcp_header_offset + 3],
+    ]);
     let seq_num = u32::from_be_bytes([
         packet.data[tcp_header_offset + 4],
         packet.data[tcp_header_offset + 5],
@@ -85,10 +89,22 @@ pub fn extract_tcp_fields(packet: Packet) -> Result<Value, Box<dyn Error>> {
         packet.data[tcp_header_offset + 10],
         packet.data[tcp_header_offset + 11],
     ]);
-    let data_offset_and_flags = u16::from_be_bytes([packet.data[tcp_header_offset + 12], packet.data[tcp_header_offset + 13]]);
-    let window_size = u16::from_be_bytes([packet.data[tcp_header_offset + 14], packet.data[tcp_header_offset + 15]]);
-    let checksum = u16::from_be_bytes([packet.data[tcp_header_offset + 16], packet.data[tcp_header_offset + 17]]);
-    let urg_ptr = u16::from_be_bytes([packet.data[tcp_header_offset + 18], packet.data[tcp_header_offset + 19]]);
+    let data_offset_and_flags = u16::from_be_bytes([
+        packet.data[tcp_header_offset + 12],
+        packet.data[tcp_header_offset + 13],
+    ]);
+    let window_size = u16::from_be_bytes([
+        packet.data[tcp_header_offset + 14],
+        packet.data[tcp_header_offset + 15],
+    ]);
+    let checksum = u16::from_be_bytes([
+        packet.data[tcp_header_offset + 16],
+        packet.data[tcp_header_offset + 17],
+    ]);
+    let urg_ptr = u16::from_be_bytes([
+        packet.data[tcp_header_offset + 18],
+        packet.data[tcp_header_offset + 19],
+    ]);
 
     let flags = data_offset_and_flags & 0x01FF;
     let ns = (flags & 0x0100) != 0;
@@ -110,7 +126,7 @@ pub fn extract_tcp_fields(packet: Packet) -> Result<Value, Box<dyn Error>> {
     // Make sure the data offset does not exceed the packet data length
     if packet.data.len() < tcp_data_offset {
         return Err(Box::new(std::io::Error::new(
-            std::io::ErrorKind::InvalidData, 
+            std::io::ErrorKind::InvalidData,
             format!(
                 "TCP data offset exceeds packet data length. packet.data.len(): {}, tcp_data_offset: {}",
                 packet.data.len(),
