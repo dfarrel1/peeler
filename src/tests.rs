@@ -58,14 +58,22 @@ mod unittests {
         let packet_data = create_test_udp_packet();
 
         let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
-        let ts_sec = timestamp.as_secs() as i64;
-        let ts_usec = timestamp.subsec_micros() as i32;
-
+        let (ts_sec, ts_usec) = match cfg!(target_arch = "aarch64") {
+            true => (timestamp.as_secs() as i32, timestamp.subsec_micros() as i32),
+            false => (timestamp.as_secs() as i32, timestamp.subsec_micros() as i32),
+        };
+        
         // Create a PacketHeader struct
         let header = PacketHeader {
-            ts: timeval {
-                tv_sec: ts_sec,
-                tv_usec: ts_usec,
+            #[cfg(target_arch = "aarch64")]
+            ts: timeval {                
+                tv_sec: ts_sec as i64,                
+                tv_usec: ts_usec as i32,
+            },
+            #[cfg(all(target_arch = "x86_64", target_pointer_width = "32"))]
+            ts: timeval {                
+                tv_sec: ts_sec as i32,                
+                tv_usec: ts_usec as i32,
             },
             caplen: packet_data.len() as u32,
             len: packet_data.len() as u32,
@@ -151,14 +159,16 @@ mod unittests {
         let packet_data = create_test_tcp_packet();
 
         let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
-        let ts_sec = timestamp.as_secs() as i64;
-        let ts_usec = timestamp.subsec_micros() as i32;
+        let (ts_sec, ts_usec) = match cfg!(target_arch = "aarch64") {
+            true => (timestamp.as_secs() as i32, timestamp.subsec_micros() as i32),
+            false => (timestamp.as_secs() as i32, timestamp.subsec_micros() as i32),
+        };
 
         // Create a PacketHeader struct
         let header = PacketHeader {
             ts: timeval {
-                tv_sec: ts_sec,
-                tv_usec: ts_usec,
+                tv_sec: ts_sec as i64,
+                tv_usec: ts_usec as i32,
             },
             caplen: packet_data.len() as u32,
             len: packet_data.len() as u32,
