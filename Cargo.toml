@@ -21,6 +21,7 @@ pcap = "1.0"
 hex = "0.4.3"
 macaddr = "1.0.1"
 libc = "0.2.141"
+chrono = "0.4.26"
 
 [dependencies.pnet]
 version = "0.34.0"

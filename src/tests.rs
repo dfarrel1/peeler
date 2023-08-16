@@ -11,6 +11,9 @@ mod unittests {
         path::Path,
         time::{SystemTime, UNIX_EPOCH},
     };
+    extern crate chrono;
+    use chrono::prelude::*;
+
 
     #[test]
     fn test_extract_udp_fields_against_sample_file() {
@@ -56,26 +59,29 @@ mod unittests {
     #[test]
     fn test_extract_udp_fields_from_generated_packet() {
         let packet_data = create_test_udp_packet();
+        let now = Utc::now();
+        let secs = now.timestamp();
+        let micros = now.timestamp_micros() as i32;
 
-        let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
+        // let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
         let mut ts = timeval {            
-            tv_sec: timestamp.as_secs() as i64,            
-            tv_usec: timestamp.subsec_micros() as i32,
+            tv_sec: secs,
+            tv_usec: micros,
         };
-        
-        #[cfg(target_arch = "aarch64")]
+
+        #[cfg(all(target_arch = "aarch64"))]
         {
             ts = timeval {                
-                tv_sec: timestamp.as_secs() as i64,
-                tv_usec: timestamp.subsec_micros() as i32,
+                tv_sec: secs,
+                tv_usec: micros as i32,
             };
         }
-        
-        #[cfg(all(target_arch = "x86_64", target_pointer_width = "32"))]
+                
+        #[cfg(all(target_arch = "x86_64"))]
         {
             ts = timeval {                
-                tv_sec: timestamp.as_secs() as i32,
-                tv_usec: timestamp.subsec_micros() as i32,
+                tv_sec: secs,
+                tv_usec: micros as i64,
             };
         }
 
@@ -164,25 +170,29 @@ mod unittests {
 
         let packet_data = create_test_tcp_packet();
 
-        let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
+        let now = Utc::now();
+        let secs = now.timestamp();
+        let micros = now.timestamp_micros() as i32;
+
+        // let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
         let mut ts = timeval {            
-            tv_sec: timestamp.as_secs() as i64,            
-            tv_usec: timestamp.subsec_micros() as i32,
+            tv_sec: secs,
+            tv_usec: micros,
         };
-        
-        #[cfg(target_arch = "aarch64")]
+
+        #[cfg(all(target_arch = "aarch64"))]
         {
             ts = timeval {                
-                tv_sec: timestamp.as_secs() as i64,
-                tv_usec: timestamp.subsec_micros() as i32,
+                tv_sec: secs,
+                tv_usec: micros as i32,
             };
         }
-        
-        #[cfg(all(target_arch = "x86_64", target_pointer_width = "32"))]
+                
+        #[cfg(all(target_arch = "x86_64"))]
         {
             ts = timeval {                
-                tv_sec: timestamp.as_secs() as i32,
-                tv_usec: timestamp.subsec_micros() as i32,
+                tv_sec: secs,
+                tv_usec: micros as i64,
             };
         }
 
