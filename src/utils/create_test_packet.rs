@@ -37,8 +37,8 @@ pub fn create_test_packet() -> [u8; 100] {
         &dest_ip,
     ));
     let mut flags = tcp_packet.get_flags();
-    flags = flags & !pnet::packet::tcp::TcpFlags::SYN;
-    flags = flags | pnet::packet::tcp::TcpFlags::ACK;
+    flags &= !pnet::packet::tcp::TcpFlags::SYN;
+    flags |= pnet::packet::tcp::TcpFlags::ACK;
     tcp_packet.set_flags(flags);
     packet
 }

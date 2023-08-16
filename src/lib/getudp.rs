@@ -18,7 +18,7 @@ pub fn is_udp_packet(packet: Packet) -> bool {
     println!("now trying the negative search using hexadecimal");
     if ether_type != 0x0800 && ether_type != 0x8100 && ether_type != 0x9196 {
         // Not IPv4 or non-standard EtherType
-        print!("ether type is not 0x0800 0x8100, or 0x9196, it is {:?}\n", ether_type);
+        println!("ether type is not 0x0800 0x8100, or 0x9196, it is {:?}", ether_type);
     }
 
     let (_, ip_header) = extract_offset_and_ipheader(packet).unwrap();
@@ -51,7 +51,7 @@ pub fn is_udp_packet(packet: Packet) -> bool {
 
     if protocol != 17 {
         // Not UDP
-        print!("protocol is not 17, it is {:?}\n", protocol);
+        println!("protocol is not 17, it is {:?}", protocol);
         return false;
     } else {
         println!("protocol is 17, it is {:?}", protocol);
@@ -63,12 +63,12 @@ pub fn is_udp_packet(packet: Packet) -> bool {
 
 pub fn extract_udp_fields(packet: Packet) -> Result<Value, Box<dyn Error>> {
     let (offset, ip_header) = extract_offset_and_ipheader(packet.clone()).unwrap();
-    print!("offset: {:?}\n", offset);
+    println!("offset: {:?}", offset);
     // Parse IP header
-    let ip_header_len = ip_header.len() as usize;
-    print!("ip_header_len: {:?}\n", ip_header_len);
+    let ip_header_len = ip_header.len();
+    println!("ip_header_len: {:?}", ip_header_len);
     let udp_header_offset = offset + ip_header_len;
-    print!("udp_header_offset: {:?}\n", udp_header_offset);
+    println!("udp_header_offset: {:?}", udp_header_offset);
 
     // on sample packet 
     // 0000   ff ff ff ff ff ff 02 53 4c 56 91 f6 81 00 00 32

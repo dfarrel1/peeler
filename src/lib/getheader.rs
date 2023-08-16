@@ -13,7 +13,7 @@ pub fn extract_offset_and_ipheader(packet: Packet) -> Result<(usize, &[u8]), Box
     let mut offset = ethernet.to_header().header_len();
     let ether_type = ethernet.ether_type();
     println!("ether_type: {:?}", ether_type);
-    if ether_type >= 0x8100 && ether_type <= 0x8FFF {
+    if (0x8100..=0x8FFF).contains(&ether_type) {
         offset += 4; // skip over VLAN tag
         let mut vlan_found = false;
         let mut tpid: u16 = 0;
@@ -54,5 +54,5 @@ pub fn extract_offset_and_ipheader(packet: Packet) -> Result<(usize, &[u8]), Box
     };
 
     let ip_header = &packet.data[offset..offset + ip_header_len];
-    return Ok((offset, ip_header))
+    Ok((offset, ip_header))
 }
