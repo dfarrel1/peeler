@@ -1,4 +1,3 @@
-
 // use std::time::{SystemTime, UNIX_EPOCH};
 // use pcap::{PacketHeader,Packet};
 // use libc::{timeval};
@@ -40,13 +39,10 @@
 //     };
 
 //     // Create a TestPacket struct with the PacketHeader and a reference to the packet data
-//     Packet::new(&header, packet_data) 
-    
+//     Packet::new(&header, packet_data)
+
 //     // {
 //     //     header: header.clone(),
 //     //     data: packet_data.clone(),
 //     // }
 // }
-
-
-

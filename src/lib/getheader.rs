@@ -3,7 +3,9 @@ use pcap::Packet;
 
 // it would seem that this function is working when used with getudp.rs
 // but it does not seem to work in conjunction with gettcp.rs
-pub fn extract_offset_and_ipheader(packet: Packet) -> Result<(usize, &[u8]), Box<dyn std::error::Error>> {
+pub fn extract_offset_and_ipheader(
+    packet: Packet,
+) -> Result<(usize, &[u8]), Box<dyn std::error::Error>> {
     let ethernet = Ethernet2HeaderSlice::from_slice(&packet.data[0..14]).unwrap();
     // Parse Ethernet header manually
     let ether_type = u16::from_be_bytes([packet.data[12], packet.data[13]]);
@@ -49,7 +51,7 @@ pub fn extract_offset_and_ipheader(packet: Packet) -> Result<(usize, &[u8]), Box
             return Err(Box::new(std::io::Error::new(
                 std::io::ErrorKind::InvalidData,
                 "Unsupported EtherType",
-            )))
+            )));
         }
     };
 

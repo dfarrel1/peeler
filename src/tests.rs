@@ -1,20 +1,27 @@
 #[cfg(test)]
 mod tests {
-    use pcap::{Capture, Packet};
     use crate::lib::gettcp::extract_tcp_fields;
     use crate::lib::getudp::extract_udp_fields;
-    use std::{time::{SystemTime, UNIX_EPOCH}, path::Path};
-    use pcap::PacketHeader;
-    use libc::timeval;
     use crate::utils::create_test_packet::create_test_packet;
+    use libc::timeval;
+    use pcap::PacketHeader;
+    use pcap::{Capture, Packet};
+    use std::{
+        path::Path,
+        time::{SystemTime, UNIX_EPOCH},
+    };
 
     #[test]
     fn test_extract_udp_fields() {
         let current_file_path = Path::new(file!());
-        let parent_directory = current_file_path.parent().expect("Failed to get parent directory");
+        let parent_directory = current_file_path
+            .parent()
+            .expect("Failed to get parent directory");
         let relative_path = parent_directory.join("../data/samples/tcp_packet.pcap");
         // let relative_path = parent_directory.join("../data/samples/udp_packet.pcap");
-        let filepath_buf = relative_path.canonicalize().expect("Failed to get canonical path");
+        let filepath_buf = relative_path
+            .canonicalize()
+            .expect("Failed to get canonical path");
         let filepath = filepath_buf.to_str().expect("Path is not valid UTF-8");
         let mut cap = Capture::from_file(filepath).unwrap();
         let packet = cap.next_packet().unwrap();
@@ -28,7 +35,6 @@ mod tests {
 
     #[test]
     fn test_extract_tcp_fields() {
-
         // these test packets manually defined are failing the test
         // ERROR: Err(Custom { kind: InvalidData, error: "TCP data offset exceeds packet data length. packet.data.len(): 58, tcp_data_offset: 74" })
         // let packet_data: &[u8] = &[
@@ -50,14 +56,17 @@ mod tests {
 
         // Create a PacketHeader struct
         let header = PacketHeader {
-            ts: timeval { tv_sec: ts_sec, tv_usec: ts_usec },
+            ts: timeval {
+                tv_sec: ts_sec,
+                tv_usec: ts_usec,
+            },
             caplen: packet_data.len() as u32,
             len: packet_data.len() as u32,
         };
 
         // Create a TestPacket struct with the PacketHeader and a reference to the packet data
         let test_packet = Packet::new(&header, &packet_data);
-        // let test_packet = get_test_tcp_packet();                
+        // let test_packet = get_test_tcp_packet();
         // let packet = test_packet.to_packet();
         let result = extract_tcp_fields(test_packet);
 
@@ -74,7 +83,6 @@ mod tests {
         assert_eq!(fields["window_size"].as_u64().unwrap() as u16, 229);
         // assert_eq!(fields["checksum"].as_u64().unwrap() as u16, 0);
         assert_eq!(fields["urg_ptr"].as_u64().unwrap() as u16, 0);
-        
 
         // Check flags
         let flags = fields["flags"].as_object().unwrap();
@@ -86,6 +94,5 @@ mod tests {
         assert_eq!(flags["urg"], false);
         assert_eq!(flags["ece"], false);
         assert_eq!(flags["cwr"], false);
-
     }
 }

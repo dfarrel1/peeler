@@ -1,10 +1,10 @@
-use std::net::Ipv4Addr;
-use pnet::packet::MutablePacket;
-use pnet::packet::ipv4::MutableIpv4Packet;
-use pnet::packet::ethernet::{EtherTypes, MutableEthernetPacket};
 use pnet::datalink::MacAddr;
+use pnet::packet::ethernet::{EtherTypes, MutableEthernetPacket};
 use pnet::packet::ip::IpNextHeaderProtocols;
+use pnet::packet::ipv4::MutableIpv4Packet;
 use pnet::packet::tcp::MutableTcpPacket;
+use pnet::packet::MutablePacket;
+use std::net::Ipv4Addr;
 
 pub fn create_test_packet() -> [u8; 100] {
     let mut packet = [0u8; 100];
