@@ -17,6 +17,3 @@
 *.log
 *.swp
 *~
-
-# Data
-data/**
