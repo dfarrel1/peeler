@@ -17,11 +17,14 @@ mod unittests {
         let parent_directory = current_file_path
             .parent()
             .expect("Failed to get parent directory");
-        let relative_path = parent_directory.join("../data/samples/udp_packet.pcap");
+        let relative_path = parent_directory.join("../data/samples/");
         let filepath_buf = relative_path
             .canonicalize()
             .expect("Failed to get canonical path");
         let filepath = filepath_buf.to_str().expect("Path is not valid UTF-8");
+        let data_path = std::env::var("TEST_DATA_PATH").unwrap_or_else(|_| filepath.to_string());
+        let filepath = Path::new(&data_path).join("udp_packet.pcap");
+
         let mut cap = Capture::from_file(filepath).unwrap();
         let packet = cap.next_packet().unwrap();
         let packet = Packet::new(packet.header, packet.data);
@@ -154,7 +157,7 @@ mod unittests {
 
         let now = Utc::now();
         let secs = now.timestamp();
-        let micros = now.timestamp_micros() as i32;        
+        let micros = now.timestamp_micros() as i32;
         let ts = timeval {
             tv_sec: secs,
             #[cfg(target_arch = "aarch64")]
