@@ -29,7 +29,7 @@ pub fn extract_ethernet_ip_fields(packet: &Packet) -> Result<Value, Box<dyn std:
 
     // let ip_header = &packet.data[offset..offset + ip_header_len];
     // try new technique
-    let (_offset, ip_header) = match extract_offset_and_ipheader(&packet) {
+    let (_offset, ip_header) = match extract_offset_and_ipheader(packet) {
         Ok(header) => header,
         Err(e) => {
             println!("error: {:?}", e);

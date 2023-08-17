@@ -41,7 +41,7 @@ fn get_tcp_data_offset(ethernet_header: &[u8], ip_header: &[u8], tcp_header: &[u
 }
 
 pub fn extract_tcp_fields(packet: &Packet) -> Result<Value, Box<dyn Error>> {
-    let (offset, ip_header) = extract_offset_and_ipheader(&packet).unwrap();
+    let (offset, ip_header) = extract_offset_and_ipheader(packet).unwrap();
     let ip_header_len = ip_header.len();
     let tcp_header_offset = offset + ip_header_len;
 
