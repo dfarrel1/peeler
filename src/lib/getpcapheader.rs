@@ -1,7 +1,7 @@
 use pcap::Packet;
 use serde_json::json;
 
-pub fn extract_pcap_header_info(packet: Packet) -> String {
+pub fn extract_pcap_header_info(packet: &Packet) -> String {
     let packet = Packet::new(packet.header, packet.data);
 
     json!({
