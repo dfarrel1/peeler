@@ -8,18 +8,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-# TODO clean this up, some are unused
-pcap-parser = { version = "0.14.0", features = ["data"] }
-env-file-reader = "0.3.0"
 etherparse = "0.13.0"
-anyhow = "1.0.69"
-clap = { version = "4.1.8", features = ["derive"] }
-serde = "1.0.155"
+serde = { version = "1.0", features = ["derive"] }
 serde_derive = "1.0.155"
 serde_json = "1.0.94"
 pcap = "1.0"
-hex = "0.4.3"
-macaddr = "1.0.1"
 libc = "0.2.141"
 chrono = "0.4.26"
 
