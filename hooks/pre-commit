@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# Run rustfmt
+echo "Running rustfmt..."
+cargo fmt -- --check
+
+# Check rustfmt's exit status
+STATUS=$?
+if [ $STATUS -ne 0 ]
+then
+  echo "rustfmt check failed, aborting commit."
+  exit 1
+fi
+
+# Run clippy
+echo "Running clippy..."
+cargo clippy -- -D warnings
+
+# Check clippy's exit status
+STATUS=$?
+if [ $STATUS -ne 0 ]
+then
+  echo "clippy check failed, aborting commit."
+  exit 1
+fi
+
+# If we made it here, everything passed
+echo "All checks passed, proceeding with commit."
+exit 0
