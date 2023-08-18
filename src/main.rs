@@ -27,7 +27,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         println!("i: {:?}", i);
 
-        let packet_header_json = extract_pcap_header_info(&packet);
+        let packet_header_struct = extract_pcap_header_info(&packet);
+        let packet_header_json = serde_json::to_string_pretty(&packet_header_struct)?;
         let ip_header_json = match extract_ethernet_ip_fields(&packet) {
             Ok(fields) => serde_json::to_string_pretty(&fields).unwrap(),
             Err(err) => format!("Error extracting IP header fields: {}", err),
