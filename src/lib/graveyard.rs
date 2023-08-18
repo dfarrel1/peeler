@@ -1,7 +1,7 @@
 // no longer in use
 use std::time::{SystemTime, UNIX_EPOCH};
 use libc::{timeval, suseconds_t};
-use pcap::{Packet, PacketHeader};
+    use pcap::{Packet, PacketHeader};
 
 fn get_packet_header(packet_data: Packet) -> PacketHeader {
     // Get current time in seconds and microseconds
