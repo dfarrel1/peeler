@@ -46,7 +46,7 @@ mod unittests {
         let packet = Packet::new(packet.header, packet.data);
 
         // Call the function under test
-        let result = extract_udp_fields(packet.clone());
+        let result = extract_udp_fields(&packet);
 
         // Handle the Result
         match result {
@@ -96,7 +96,7 @@ mod unittests {
         let test_packet = Packet::new(&header, &packet_data);
 
         // Call the function under test
-        let result = extract_udp_fields(test_packet);
+        let result = extract_udp_fields(&test_packet);
 
         // Handle the Result
         match result {
@@ -133,7 +133,7 @@ mod unittests {
         let packet = Packet::new(packet.header, packet.data);
 
         // Call the function under test
-        let result = extract_tcp_fields(packet.clone());
+        let result = extract_tcp_fields(&packet);
 
         // Handle the Result
         match result {
@@ -193,7 +193,7 @@ mod unittests {
         let test_packet = Packet::new(&header, &packet_data);
         // let test_packet = get_test_tcp_packet();
         // let packet = test_packet.to_packet();
-        let result = extract_tcp_fields(test_packet);
+        let result = extract_tcp_fields(&test_packet);
 
         // Check the result (example)
         println!("(test_extract_tcp_fields) result: {:?}", result);

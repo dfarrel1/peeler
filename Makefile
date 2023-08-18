@@ -24,6 +24,15 @@ clippycheck:
 clippy:
 	cargo clippy --fix --allow-dirty
 
-fmt:
+rustfmt:
 	cargo fmt --all
+
+fmt: \
+	clippy \
+	rustfmt
+
+starthooks:
+	touch .git/hooks/pre-commit
+	chmod +x .git/hooks/pre-commit
+	cat hooks/pre-commit > .git/hooks/pre-commit
 

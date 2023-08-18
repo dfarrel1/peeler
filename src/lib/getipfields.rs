@@ -20,7 +20,7 @@ pub fn extract_ipv6_fields(header: &Ipv6Header) -> Value {
     })
 }
 
-pub fn extract_ethernet_ip_fields(packet: Packet) -> Result<Value, Box<dyn std::error::Error>> {
+pub fn extract_ethernet_ip_fields(packet: &Packet) -> Result<Value, Box<dyn std::error::Error>> {
     // Parse Ethernet header manually
     let dst_mac = &packet.data[0..6];
     let src_mac = &packet.data[6..12];

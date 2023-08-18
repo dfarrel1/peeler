@@ -30,21 +30,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         println!("i: {:?}", i);
         let packet = Packet::new(packet.header, packet.data);
-        let packet_header_json = extract_pcap_header_info(packet.clone());
+        let packet_header_json = extract_pcap_header_info(&packet);
 
-        let ip_header_json = match extract_ethernet_ip_fields(packet.clone()) {
+        let ip_header_json = match extract_ethernet_ip_fields(&packet) {
             Ok(fields) => serde_json::to_string_pretty(&fields).unwrap(),
             Err(err) => format!("Error extracting IP header fields: {}", err),
         };
         println!("ip_header_json: {}", ip_header_json);
 
         // check if the packet is a TCP packet
-        if !is_tcp_packet(&packet.clone()) {
+        if !is_tcp_packet(&packet) {
             println!("Not a TCP packet");
         } else {
             println!("TCP packet");
             // get extract_tcp_header_values just like ip_header_json
-            let tcp_header_json = match extract_tcp_fields(packet.clone()) {
+            let tcp_header_json = match extract_tcp_fields(&packet) {
                 Ok(fields) => serde_json::to_string_pretty(&fields).unwrap(),
                 Err(err) => format!("Error extracting TCP header fields: {}", err),
             };
@@ -52,12 +52,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         };
 
         // check if the packet is a UDP packet
-        if !is_udp_packet(packet.clone()) {
+        if !is_udp_packet(&packet) {
             println!("Not a UDP packet");
         } else {
             println!("UDP packet");
             // get extract_udp_header_values just like ip_header_json
-            let udp_header_json = match extract_udp_fields(packet.clone()) {
+            let udp_header_json = match extract_udp_fields(&packet) {
                 Ok(fields) => serde_json::to_string_pretty(&fields).unwrap(),
                 Err(err) => format!("Error extracting UDP header fields: {}", err),
             };
