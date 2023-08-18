@@ -1,12 +1,9 @@
-use pcap::{Capture, Packet};
-use std::path::Path;
-
-// use extract_offset_and_ipheader from the file getheader.rs
-
 use bare::lib::getipfields::extract_ethernet_ip_fields;
 use bare::lib::getpcapheader::extract_pcap_header_info;
 use bare::lib::gettcp::{extract_tcp_fields, is_tcp_packet};
 use bare::lib::getudp::{extract_udp_fields, is_udp_packet};
+use pcap::Capture;
+use std::path::Path;
 
 mod testfactory;
 
@@ -29,9 +26,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             break;
         }
         println!("i: {:?}", i);
-        let packet = Packet::new(packet.header, packet.data);
-        let packet_header_json = extract_pcap_header_info(&packet);
 
+        let packet_header_json = extract_pcap_header_info(&packet);
         let ip_header_json = match extract_ethernet_ip_fields(&packet) {
             Ok(fields) => serde_json::to_string_pretty(&fields).unwrap(),
             Err(err) => format!("Error extracting IP header fields: {}", err),
