@@ -17,3 +17,6 @@
 *.log
 *.swp
 *~
+
+# Data
+data/loading/RES_capture.pcapng
