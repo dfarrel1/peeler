@@ -27,7 +27,7 @@ script_dir = os.path.dirname(os.path.realpath(__file__))
 # Construct the path for RES_capture.pcapng
 input_file_path = os.path.join(script_dir, "loading", "RES_capture.pcapng")
 # Construct the path for the output file
-output_file_path = os.path.join(script_dir, "loading", "scrubbed_RES_capture.pcapng")
+output_file_path = os.path.join(script_dir, "samples", "scrubbed_RES_capture.pcapng")
 
 # Read the pcapng file
 packets = rdpcap(input_file_path)

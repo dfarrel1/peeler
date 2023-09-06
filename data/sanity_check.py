@@ -6,7 +6,7 @@ from scapy.layers.inet import IP, TCP, UDP
 # Get the location of the script
 script_dir = os.path.dirname(os.path.realpath(__file__))
 # Construct the path for output.pcapng
-output_file_path = os.path.join(script_dir, "loading", "scrubbed_RES_capture.pcapng")
+output_file_path = os.path.join(script_dir, "samples", "scrubbed_RES_capture.pcapng")
 
 # Load the pcapng file
 packets = rdpcap(output_file_path)

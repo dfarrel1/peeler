@@ -18,5 +18,6 @@ pub use lib::getprotocol::get_protocol_from_ip_header;
 pub use lib::gettcp::{extract_tcp_fields, is_tcp_packet};
 pub use lib::getudp::{extract_udp_fields, is_udp_packet};
 
+mod smoketest;
 mod testfactory;
 mod tests;
