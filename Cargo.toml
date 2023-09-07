@@ -24,6 +24,7 @@ serde_json = "1.0.94"
 pcap = "1.0"
 libc = "0.2.141"
 chrono = "0.4.26"
+base64 = "0.13"
 
 [dependencies.pnet]
 version = "0.34.0"

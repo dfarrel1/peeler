@@ -1,4 +1,5 @@
 use crate::extract_offset_and_ipheader;
+use base64::encode;
 use etherparse::{Ipv4HeaderSlice, Ipv6HeaderSlice};
 use pcap::Packet;
 use serde_json::{json, Value};
@@ -142,12 +143,15 @@ pub fn extract_udp_fields(packet: &Packet) -> Result<Value, Box<dyn Error>> {
 
     let udp_data = packet.data[udp_data_offset..udp_data_offset + udp_data_len].to_vec(); // Extract data
 
+    let udp_data_encoded = encode(&udp_data); // Encode the udp_data to Base64
+
     let udp_fields = json!({
         "src_port": src_port,
         "dst_port": dst_port,
         "len": udp_len,
         "checksum": checksum,
-        "data": udp_data
+        "data": udp_data,
+        "data_encoded": udp_data_encoded  // Add the new field
     });
 
     println!("udp_fields: {}", udp_fields);

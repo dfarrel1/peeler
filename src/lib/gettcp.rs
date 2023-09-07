@@ -3,6 +3,7 @@ use pcap::Packet;
 use serde_json::{json, Value};
 use std::error::Error;
 // use etherparse::{TcpHeader, TcpHeaderSlice};
+use base64::encode;
 
 pub fn is_tcp_packet(packet: &Packet) -> bool {
     // Extract the EtherType from the Ethernet header
@@ -136,6 +137,8 @@ pub fn extract_tcp_fields(packet: &Packet) -> Result<Value, Box<dyn Error>> {
     }
     let tcp_data = packet.data[tcp_data_offset..].to_vec(); // The rest is TCP payload
 
+    let tcp_data_encoded = encode(&tcp_data); // Encode the udp_data to Base64
+
     let tcp_fields = json!({
         "src_port": src_port,
         "dst_port": dst_port,
@@ -155,7 +158,8 @@ pub fn extract_tcp_fields(packet: &Packet) -> Result<Value, Box<dyn Error>> {
             "syn": syn,
             "fin": fin,
         },
-        "data": tcp_data
+        "data": tcp_data,
+        "data_encoded": tcp_data_encoded
     });
 
     Ok(tcp_fields)
