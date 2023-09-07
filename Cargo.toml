@@ -35,12 +35,14 @@ readme = "README.md"
 exclude = [
     "*.py",
     "requirements.txt",
+    "./requirements.txt",
     ".ignore",
     ".gitignore",
     "*.json", # Cannot exclude .cargo_vcs_info.json, .rutc_info.json etc
     ".cargo_vcs_info.json", # Cannot exclude .cargo_vcs_info.json
     ".github/",
     "data/*",
+    "data/**",
     "CHANGELOG.md",
 ]
 
