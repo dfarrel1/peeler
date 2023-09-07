@@ -54,5 +54,11 @@ exclude = [
     "CHANGELOG.md",
 ]
 
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "Cargo.lock",
+    "README.md",
+]
 
 
