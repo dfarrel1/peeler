@@ -1,8 +1,6 @@
 use etherparse::Ethernet2HeaderSlice;
 use pcap::Packet;
 
-// it would seem that this function is working when used with getudp.rs
-// but it does not seem to work in conjunction with gettcp.rs
 pub fn extract_offset_and_ipheader<'a>(
     packet: &'a Packet<'a>,
 ) -> Result<(usize, &[u8]), Box<dyn std::error::Error>> {
