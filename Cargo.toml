@@ -41,6 +41,7 @@ exclude = [
     "*.json", # Cannot exclude .cargo_vcs_info.json, .rutc_info.json etc
     ".cargo_vcs_info.json", # Cannot exclude .cargo_vcs_info.json
     ".github/",
+    "data",
     "data/*",
     "data/**",
     "CHANGELOG.md",
