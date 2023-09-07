@@ -33,6 +33,13 @@ readme = "README.md"
 
 
 exclude = [
+    "data/generator/generator.py",
+    "data/samples/scrubbed_RES_capture.pcapng",
+    "data/samples/tcp_packet.pcap",
+    "data/samples/udp_packet.pcap",
+    "data/sanity_check.py",
+    "data/scrubber.py",
+    "requirements.txt",
     "*.py",
     "requirements.txt",
     "./requirements.txt",
