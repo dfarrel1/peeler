@@ -9,6 +9,7 @@ pub struct PcapHeaderInfo {
     pub ts_usec: i64,
 }
 
+#[allow(clippy::all)] // we need the explicit type caste to address arm/x86 differences
 pub fn extract_pcap_header_info(packet: &Packet) -> PcapHeaderInfo {
     PcapHeaderInfo {
         caplen: packet.header.caplen,
