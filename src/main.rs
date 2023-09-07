@@ -1,8 +1,8 @@
-use bare::lib::getipfields::extract_ethernet_ip_fields;
-use bare::lib::getpcapheader::extract_pcap_header_info;
-use bare::lib::gettcp::{extract_tcp_fields, is_tcp_packet};
-use bare::lib::getudp::{extract_udp_fields, is_udp_packet};
 use pcap::Capture;
+use peeler::lib::getipfields::extract_ethernet_ip_fields;
+use peeler::lib::getpcapheader::extract_pcap_header_info;
+use peeler::lib::gettcp::{extract_tcp_fields, is_tcp_packet};
+use peeler::lib::getudp::{extract_udp_fields, is_udp_packet};
 use std::path::Path;
 
 mod testfactory;

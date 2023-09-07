@@ -1,10 +1,10 @@
 [package]
-name = "bare"
+name = "peeler"
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "Get components of IP packets for downstream processing"
-repository = "https://github.com/dfarrel1/bare"
+repository = "https://github.com/dfarrel1/peeler"
 readme = "README.md"
 include = [
     "src/**/*",
