@@ -26,4 +26,23 @@ targets = ["x86_64-unknown-linux-gnu"]
 authors = ["Dene Farrell dene.farrell@gmail.com"]
 
 
+license = "MIT OR Apache-2.0"
+description = "Get components of IP packets for downstream processing"
+repository = "https://github.com/dfarrel1/bare"
+readme = "README.md"
+
+
+exclude = [
+    "*.py",
+    "requirements.txt",
+    ".ignore",
+    ".gitignore",
+    "*.json", # Cannot exclude .cargo_vcs_info.json, .rutc_info.json etc
+    ".cargo_vcs_info.json", # Cannot exclude .cargo_vcs_info.json
+    ".github/",
+    ".data/",
+    "CHANGELOG.md",
+]
+
+
 
