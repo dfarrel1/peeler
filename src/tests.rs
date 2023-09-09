@@ -83,7 +83,7 @@ mod unittests {
             #[cfg(target_arch = "aarch64")]
             tv_usec: micros,
             #[cfg(not(target_arch = "aarch64"))]
-            tv_usec: micros as i64,
+            tv_usec: micros as i32,
         };
 
         let header = PacketHeader {
@@ -130,7 +130,7 @@ mod unittests {
         let filepath = filepath_buf.to_str().expect("Path is not valid UTF-8");
         let mut cap = Capture::from_file(filepath).unwrap();
         let packet = cap.next_packet().unwrap();
-        let result = extract_tcp_fields(&packet);
+        let result = extract_tcp_fields(&packet, );
 
         // Handle the Result
         match result {
@@ -162,7 +162,7 @@ mod unittests {
             #[cfg(target_arch = "aarch64")]
             tv_usec: micros,
             #[cfg(not(target_arch = "aarch64"))]
-            tv_usec: micros as i64,
+            tv_usec: micros as i32,
         };
 
         // Create a PacketHeader struct
@@ -173,7 +173,7 @@ mod unittests {
         };
 
         let packet = Packet::new(&header, &packet_data);
-        let result = extract_tcp_fields(&packet);
+        let result = extract_tcp_fields(&packet, );
 
         // Check the result (example)
         println!("(test_extract_tcp_fields) result: {:?}", result);

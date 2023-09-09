@@ -32,7 +32,7 @@ mod unittests {
 
             // Check if the packet is a TCP packet
             if is_tcp_packet(&packet) {
-                let tcp_header_json = match extract_tcp_fields(&packet) {
+                let tcp_header_json = match extract_tcp_fields(&packet, ) {
                     Ok(fields) => serde_json::to_string_pretty(&fields).unwrap(),
                     Err(err) => format!("Error extracting TCP header fields: {}", err),
                 };
