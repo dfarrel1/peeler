@@ -1,10 +1,10 @@
+use etherparse::{PacketHeaders, TransportHeader};
 use pcap::Capture;
 use peeler::lib::getipfields::extract_ethernet_ip_fields;
 use peeler::lib::getpcapheader::extract_pcap_header_info;
-use peeler::lib::gettcp::{extract_tcp_fields};
-use peeler::lib::getudp::{extract_udp_fields};
+use peeler::lib::gettcp::extract_tcp_fields;
+use peeler::lib::getudp::extract_udp_fields;
 use std::path::Path;
-use etherparse::{PacketHeaders, TransportHeader};
 
 mod testfactory;
 
@@ -47,7 +47,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             match headers.transport.ok_or("Cannot parse transport header")? {
                 TransportHeader::Udp(udp_header) => {
                     println!("UDP packet!");
-                    let udp_header_json = match extract_udp_fields(&packet) {
+                    let udp_header_json = match extract_udp_fields(&udp_header, headers.payload) {
                         Ok(fields) => serde_json::to_string_pretty(&fields).unwrap(),
                         Err(err) => format!("Error extracting UDP header fields: {}", err),
                     };

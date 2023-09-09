@@ -1,72 +1,7 @@
-use crate::extract_offset_and_ipheader;
 use base64::encode;
-use etherparse::{Ipv4HeaderSlice, Ipv6HeaderSlice};
-use pcap::Packet;
+use etherparse::UdpHeader;
 use serde_json::{json, Value};
 use std::error::Error;
-
-pub fn is_udp_packet(packet: &Packet) -> bool {
-    // Parse Ethernet header
-    let ether_type = u16::from_be_bytes([packet[12], packet[13]]);
-    println!("checking against ether type {:?}", ether_type);
-    println!("checking against ether type (hex) 0x{:02x}", ether_type);
-    // check if ether_type is any of the following (2048, 37366, 33024) use integer notation, not hexadecimal
-    if ether_type == 2048 || ether_type == 37366 || ether_type == 33024 {
-        println!("found a UDP packet with ether type {:?}", ether_type);
-    } else {
-        return false;
-    }
-    println!("now trying the negative search using hexadecimal");
-    if ether_type != 0x0800 && ether_type != 0x8100 && ether_type != 0x9196 {
-        // Not IPv4 or non-standard EtherType
-        println!(
-            "ether type is not 0x0800 0x8100, or 0x9196, it is {:?}",
-            ether_type
-        );
-    }
-
-    let (_, ip_header) = extract_offset_and_ipheader(packet).unwrap();
-
-    println!("ip_header {:?}", ip_header);
-
-    let protocol: u8 = match ether_type {
-        0x0800 => {
-            // IPv4
-            let ip_versioned_header = Ipv4HeaderSlice::from_slice(ip_header);
-            ip_versioned_header.unwrap().protocol()
-        }
-        0x86DD => {
-            // IPv6
-            let ip_versioned_header = Ipv6HeaderSlice::from_slice(ip_header);
-            ip_versioned_header.unwrap().next_header()
-        }
-        0x86F7 => {
-            // IPv4 over IPsec
-            let ip_versioned_header = Ipv4HeaderSlice::from_slice(ip_header);
-            ip_versioned_header.unwrap().protocol()
-        }
-        0x8100 => {
-            // IPv4 over VLAN
-            let ip_versioned_header = Ipv4HeaderSlice::from_slice(ip_header);
-            ip_versioned_header.unwrap().protocol()
-        }
-        _ => {
-            println!("unsupported EtherType: {:?}", ether_type);
-            return false;
-        }
-    };
-
-    if protocol != 17 {
-        // Not UDP
-        println!("protocol is not 17, it is {:?}", protocol);
-        return false;
-    } else {
-        println!("protocol is 17, it is {:?}", protocol);
-    }
-
-    // Packet is UDP
-    true
-}
 
 // on sample packet
 // 0000   ff ff ff ff ff ff 02 53 4c 56 91 f6 81 00 00 32
@@ -92,65 +27,25 @@ pub fn is_udp_packet(packet: &Packet) -> bool {
 //     "checksum": 9165
 //   })
 
-pub fn extract_udp_fields(packet: &Packet) -> Result<Value, Box<dyn Error>> {
-    let (offset, ip_header) = extract_offset_and_ipheader(packet).unwrap();
-    println!("offset: {:?}", offset);
-
-    let ip_header_len = ip_header.len();
-    println!("ip_header_len: {:?}", ip_header_len);
-
-    let udp_header_offset = offset + ip_header_len;
-    println!("udp_header_offset: {:?}", udp_header_offset);
-
-    if udp_header_offset + 8 > packet.data.len() {
-        return Err("Packet data is too short for UDP header".into());
-    }
-
-    let src_port = u16::from_be_bytes([
-        packet.data[udp_header_offset],
-        packet.data[udp_header_offset + 1],
-    ]);
-    let dst_port = u16::from_be_bytes([
-        packet.data[udp_header_offset + 2],
-        packet.data[udp_header_offset + 3],
-    ]);
-    let udp_len = u16::from_be_bytes([
-        packet.data[udp_header_offset + 4],
-        packet.data[udp_header_offset + 5],
-    ]);
-    let checksum = u16::from_be_bytes([
-        packet.data[udp_header_offset + 6],
-        packet.data[udp_header_offset + 7],
-    ]);
+pub fn extract_udp_fields(udp_header: &UdpHeader, payload: &[u8]) -> Result<Value, Box<dyn Error>> {
+    let src_port = udp_header.source_port;
+    let dst_port = udp_header.destination_port;
+    let udp_len = udp_header.length;
+    let checksum = udp_header.checksum;
 
     println!("src_port: {}", src_port);
     println!("dst_port: {}", dst_port);
     println!("udp_len: {}", udp_len);
     println!("checksum: {}", checksum);
 
-    if udp_len < 8 {
-        return Err("Invalid UDP length".into());
-    }
-
-    let udp_data_offset = udp_header_offset + 8; // UDP header is 8 bytes long
-    let udp_data_len = (udp_len as usize)
-        .checked_sub(8)
-        .ok_or("UDP length underflow")?;
-
-    if udp_data_offset + udp_data_len > packet.data.len() {
-        return Err("Packet data is too short for UDP data".into());
-    }
-
-    let udp_data = packet.data[udp_data_offset..udp_data_offset + udp_data_len].to_vec(); // Extract data
-
-    let udp_data_encoded = encode(&udp_data); // Encode the udp_data to Base64
+    let udp_data_encoded = encode(payload); // Encode the udp_data to Base64
 
     let udp_fields = json!({
         "src_port": src_port,
         "dst_port": dst_port,
         "len": udp_len,
         "checksum": checksum,
-        "data": udp_data,
+        "data": payload,
         "data_encoded": udp_data_encoded  // Add the new field
     });
 
