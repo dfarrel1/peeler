@@ -26,7 +26,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         if i > 1 {
             break;
         }
-        println!("i: {:?}", i);
+        println!("i: {i:?}");
 
         let packet_header_struct = extract_pcap_header_info(&packet);
         let packet_header_json = serde_json::to_string_pretty(&packet_header_struct)?;
@@ -39,9 +39,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             // ----- Ethernet & IP -----
             let ip_header_json = match extract_ethernet_ip_fields(&headers) {
                 Ok(fields) => serde_json::to_string_pretty(&fields).unwrap(),
-                Err(err) => format!("Error extracting IP header fields: {}", err),
+                Err(err) => format!("Error extracting IP header fields: {err}"),
             };
-            println!("ip_header_json: {}", ip_header_json);
+            println!("ip_header_json: {ip_header_json}");
 
             // ----- Transport -----
             if let Some(transport_header) = headers.transport {
@@ -51,18 +51,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         let udp_header_json = match extract_udp_fields(&udp_header, headers.payload)
                         {
                             Ok(fields) => serde_json::to_string_pretty(&fields).unwrap(),
-                            Err(err) => format!("Error extracting UDP header fields: {}", err),
+                            Err(err) => format!("Error extracting UDP header fields: {err}"),
                         };
-                        println!("udp_header_json: {}", udp_header_json);
+                        println!("udp_header_json: {udp_header_json}");
                     }
                     TransportHeader::Tcp(tcp_header) => {
                         println!("TCP packet!");
                         let tcp_header_json = match extract_tcp_fields(&tcp_header, headers.payload)
                         {
                             Ok(fields) => serde_json::to_string_pretty(&fields).unwrap(),
-                            Err(err) => format!("Error extracting TCP header fields: {}", err),
+                            Err(err) => format!("Error extracting TCP header fields: {err}"),
                         };
-                        println!("tcp_header_json: {}", tcp_header_json);
+                        println!("tcp_header_json: {tcp_header_json}");
                     }
                     TransportHeader::Icmpv4(_) => {
                         println!("Found an ICMP v4 packet...");
@@ -72,14 +72,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     }
                 }
             }
-        } else {
-            // packet is invalid: jump to the next iteration to examine another packet waiting in the buffer
-            continue;
+            let json_obj: serde_json::Value = serde_json::from_str(&packet_header_json)?;
+            let packet_header_json = serde_json::to_string_pretty(&json_obj)?;
+            println!("packet_header_json: {packet_header_json}");
         }
-
-        let json_obj: serde_json::Value = serde_json::from_str(&packet_header_json)?;
-        let packet_header_json = serde_json::to_string_pretty(&json_obj)?;
-        println!("packet_header_json: {}", packet_header_json);
     }
 
     Ok(())

@@ -97,7 +97,7 @@ mod unittests {
             #[cfg(target_arch = "aarch64")]
             tv_usec: micros,
             #[cfg(not(target_arch = "aarch64"))]
-            tv_usec: micros as i32,
+            tv_usec: micros as i64,
         };
 
         let header = PacketHeader {
@@ -203,7 +203,7 @@ mod unittests {
             #[cfg(target_arch = "aarch64")]
             tv_usec: micros,
             #[cfg(not(target_arch = "aarch64"))]
-            tv_usec: micros as i32,
+            tv_usec: micros as i64,
         };
 
         // Create a PacketHeader struct

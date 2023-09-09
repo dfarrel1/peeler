@@ -64,13 +64,13 @@ pub fn extract_ethernet_ip_fields(
     // determine IP version and parse header fields accordingly
     let ip_version = match ip_header {
         IpHeader::Version4(v4_header, _) => {
-            let mut fields = extract_ipv4_fields(&v4_header);
+            let mut fields = extract_ipv4_fields(v4_header);
             fields.destination_mac = Some(dst_mac);
             fields.source_mac = Some(src_mac);
             serde_json::to_value(&fields)?
         }
         IpHeader::Version6(v6_header, _) => {
-            let mut fields = extract_ipv6_fields(&v6_header);
+            let mut fields = extract_ipv6_fields(v6_header);
             fields.destination_mac = Some(dst_mac);
             fields.source_mac = Some(src_mac);
             serde_json::to_value(&fields)?

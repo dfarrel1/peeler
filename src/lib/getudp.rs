@@ -33,10 +33,10 @@ pub fn extract_udp_fields(udp_header: &UdpHeader, payload: &[u8]) -> Result<Valu
     let udp_len = udp_header.length;
     let checksum = udp_header.checksum;
 
-    println!("src_port: {}", src_port);
-    println!("dst_port: {}", dst_port);
-    println!("udp_len: {}", udp_len);
-    println!("checksum: {}", checksum);
+    println!("src_port: {src_port}");
+    println!("dst_port: {dst_port}");
+    println!("udp_len: {udp_len}");
+    println!("checksum: {checksum}");
 
     let udp_data_encoded = encode(payload); // Encode the udp_data to Base64
 
@@ -49,7 +49,7 @@ pub fn extract_udp_fields(udp_header: &UdpHeader, payload: &[u8]) -> Result<Valu
         "data_encoded": udp_data_encoded  // Add the new field
     });
 
-    println!("udp_fields: {}", udp_fields);
+    println!("udp_fields: {udp_fields}");
 
     Ok(udp_fields)
 }
