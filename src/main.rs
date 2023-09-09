@@ -44,28 +44,32 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("ip_header_json: {}", ip_header_json);
 
             // ----- Transport -----
-            match headers.transport.ok_or("Cannot parse transport header")? {
-                TransportHeader::Udp(udp_header) => {
-                    println!("UDP packet!");
-                    let udp_header_json = match extract_udp_fields(&udp_header, headers.payload) {
-                        Ok(fields) => serde_json::to_string_pretty(&fields).unwrap(),
-                        Err(err) => format!("Error extracting UDP header fields: {}", err),
-                    };
-                    println!("udp_header_json: {}", udp_header_json);
-                }
-                TransportHeader::Tcp(tcp_header) => {
-                    println!("TCP packet!");
-                    let tcp_header_json = match extract_tcp_fields(&tcp_header, headers.payload) {
-                        Ok(fields) => serde_json::to_string_pretty(&fields).unwrap(),
-                        Err(err) => format!("Error extracting TCP header fields: {}", err),
-                    };
-                    println!("tcp_header_json: {}", tcp_header_json);
-                }
-                TransportHeader::Icmpv4(_) => {
-                    println!("Found an ICMP v4 packet...");
-                }
-                TransportHeader::Icmpv6(_) => {
-                    println!("Found an ICMP v6 packet...");
+            if let Some(transport_header) = headers.transport {
+                match transport_header {
+                    TransportHeader::Udp(udp_header) => {
+                        println!("UDP packet!");
+                        let udp_header_json = match extract_udp_fields(&udp_header, headers.payload)
+                        {
+                            Ok(fields) => serde_json::to_string_pretty(&fields).unwrap(),
+                            Err(err) => format!("Error extracting UDP header fields: {}", err),
+                        };
+                        println!("udp_header_json: {}", udp_header_json);
+                    }
+                    TransportHeader::Tcp(tcp_header) => {
+                        println!("TCP packet!");
+                        let tcp_header_json = match extract_tcp_fields(&tcp_header, headers.payload)
+                        {
+                            Ok(fields) => serde_json::to_string_pretty(&fields).unwrap(),
+                            Err(err) => format!("Error extracting TCP header fields: {}", err),
+                        };
+                        println!("tcp_header_json: {}", tcp_header_json);
+                    }
+                    TransportHeader::Icmpv4(_) => {
+                        println!("Found an ICMP v4 packet...");
+                    }
+                    TransportHeader::Icmpv6(_) => {
+                        println!("Found an ICMP v6 packet...");
+                    }
                 }
             }
         } else {

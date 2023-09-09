@@ -10,6 +10,7 @@ mod unittests {
     use std::path::Path;
     extern crate chrono;
     use chrono::prelude::*;
+    use etherparse::{PacketHeaders, TransportHeader};
 
     #[test]
     fn test_extract_udp_fields_against_sample_file() {
@@ -45,8 +46,21 @@ mod unittests {
         let packet = cap.next_packet().unwrap();
         let packet = Packet::new(packet.header, packet.data);
 
+        let headers = PacketHeaders::from_ethernet_slice(&packet).unwrap();
+
         // Call the function under test
-        let result = extract_udp_fields(&packet);
+        let result = match headers
+            .transport
+            .ok_or("Cannot parse transport header")
+            .unwrap()
+        {
+            TransportHeader::Udp(udp_header) => extract_udp_fields(&udp_header, headers.payload),
+            _ => Err(Box::new(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "Not a UDP packet",
+            ))
+            .into()),
+        };
 
         // Handle the Result
         match result {
@@ -95,8 +109,21 @@ mod unittests {
         // Create a TestPacket struct with the PacketHeader and a reference to the packet data
         let test_packet = Packet::new(&header, &packet_data);
 
+        let headers = PacketHeaders::from_ethernet_slice(&test_packet).unwrap();
+
         // Call the function under test
-        let result = extract_udp_fields(&test_packet);
+        let result = match headers
+            .transport
+            .ok_or("Cannot parse transport header")
+            .unwrap()
+        {
+            TransportHeader::Udp(udp_header) => extract_udp_fields(&udp_header, headers.payload),
+            _ => Err(Box::new(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "Not a UDP packet",
+            ))
+            .into()),
+        };
 
         // Handle the Result
         match result {
@@ -130,7 +157,21 @@ mod unittests {
         let filepath = filepath_buf.to_str().expect("Path is not valid UTF-8");
         let mut cap = Capture::from_file(filepath).unwrap();
         let packet = cap.next_packet().unwrap();
-        let result = extract_tcp_fields(&packet);
+
+        let headers = PacketHeaders::from_ethernet_slice(&packet).unwrap();
+
+        let result = match headers
+            .transport
+            .ok_or("Cannot parse transport header")
+            .unwrap()
+        {
+            TransportHeader::Tcp(tcp_header) => extract_tcp_fields(&tcp_header, headers.payload),
+            _ => Err(Box::new(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "Not a TCP packet",
+            ))
+            .into()),
+        };
 
         // Handle the Result
         match result {
@@ -173,7 +214,21 @@ mod unittests {
         };
 
         let packet = Packet::new(&header, &packet_data);
-        let result = extract_tcp_fields(&packet);
+
+        let headers = PacketHeaders::from_ethernet_slice(&packet).unwrap();
+
+        let result = match headers
+            .transport
+            .ok_or("Cannot parse transport header")
+            .unwrap()
+        {
+            TransportHeader::Tcp(tcp_header) => extract_tcp_fields(&tcp_header, headers.payload),
+            _ => Err(Box::new(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "Not a TCP packet",
+            ))
+            .into()),
+        };
 
         // Check the result (example)
         println!("(test_extract_tcp_fields) result: {:?}", result);
