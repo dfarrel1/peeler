@@ -1,5 +1,7 @@
 # peeler
 
+**[peeler crate](https://crates.io/crates/peeler)**
+
 get all the parts from the packet that we want
 
 ## goals:
