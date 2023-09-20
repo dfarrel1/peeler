@@ -1,8 +1,17 @@
 [package]
-name = "bare"
-version = "0.1.0"
+name = "peeler"
+version = "0.1.1"
 edition = "2021"
-
+license = "MIT OR Apache-2.0"
+description = "Get components of IP packets for downstream processing"
+repository = "https://github.com/dfarrel1/peeler"
+readme = "README.md"
+include = [
+    "src/**/*",
+    "Cargo.toml",
+    "Cargo.lock",
+    "README.md",
+]
 # Specify a target
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -15,6 +24,7 @@ serde_json = "1.0.94"
 pcap = "1.0"
 libc = "0.2.141"
 chrono = "0.4.26"
+base64 = "0.13"
 
 [dependencies.pnet]
 version = "0.34.0"
@@ -24,6 +34,8 @@ targets = ["x86_64-unknown-linux-gnu"]
 
 [package.metadata]
 authors = ["Dene Farrell dene.farrell@gmail.com"]
+
+
 
 
 

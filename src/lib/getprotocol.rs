@@ -15,7 +15,7 @@ pub fn get_protocol_from_ip_header(
             Ok(ip_versioned_header.next_header())
         }
         _ => {
-            let ether_type_str = format!("Unsupported EtherType: {:?}", ether_type);
+            let ether_type_str = format!("Unsupported EtherType: {ether_type:?}");
             Err(Box::new(std::io::Error::new(
                 std::io::ErrorKind::InvalidData,
                 ether_type_str,

@@ -28,8 +28,8 @@ pub fn create_test_tcp_packet() -> [u8; 100] {
     let mut tcp_packet = MutableTcpPacket::new(ip_packet.payload_mut()).unwrap();
     tcp_packet.set_source(49187);
     tcp_packet.set_destination(80);
-    tcp_packet.set_sequence(287454020);
-    tcp_packet.set_acknowledgement(1432778632);
+    tcp_packet.set_sequence(287_454_020);
+    tcp_packet.set_acknowledgement(1_432_778_632);
     tcp_packet.set_data_offset(5);
     tcp_packet.set_window(229);
     tcp_packet.set_checksum(pnet::packet::tcp::ipv4_checksum(
