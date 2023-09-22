@@ -43,7 +43,5 @@ pub fn extract_udp_fields(udp_header: &UdpHeader, payload: &[u8]) -> Result<Valu
         "data_encoded": udp_data_encoded  // Add the new field
     });
 
-    println!("udp_fields: {udp_fields}");
-
     Ok(udp_fields)
 }
