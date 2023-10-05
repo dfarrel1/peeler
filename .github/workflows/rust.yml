@@ -48,7 +48,7 @@ jobs:
     - name: Print Rust Configurations
       run: rustc --print cfg
     - name: Install libpcap
-      run: sudo apt-get install libpcap-dev
+      run: sudo apt-get install libpcap-dev libcap-dev
     - name: Build
       run: cargo build --target=x86_64-unknown-linux-gnu --features "static_linking" --release
     - name: Run tests
