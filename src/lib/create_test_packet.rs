@@ -1,12 +1,21 @@
+#[cfg(test)]
 use pnet::datalink::MacAddr;
+#[cfg(test)]
 use pnet::packet::ethernet::{EtherTypes, MutableEthernetPacket};
+#[cfg(test)]
 use pnet::packet::ip::IpNextHeaderProtocols;
+#[cfg(test)]
 use pnet::packet::ipv4::MutableIpv4Packet;
+#[cfg(test)]
 use pnet::packet::tcp::MutableTcpPacket;
+#[cfg(test)]
 use pnet::packet::udp::MutableUdpPacket;
+#[cfg(test)]
 use pnet::packet::MutablePacket;
+#[cfg(test)]
 use std::net::Ipv4Addr;
 
+#[cfg(test)]
 pub fn create_test_tcp_packet() -> [u8; 100] {
     let mut packet = [0u8; 100];
 
@@ -44,6 +53,7 @@ pub fn create_test_tcp_packet() -> [u8; 100] {
     packet
 }
 
+#[cfg(test)]
 pub fn create_test_udp_packet() -> [u8; 100] {
     let mut packet = [0u8; 100];
 

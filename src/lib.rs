@@ -8,8 +8,11 @@ pub mod lib {
     pub mod getudp;
 }
 
+#[cfg(test)]
 pub use lib::create_test_packet::create_test_tcp_packet;
+#[cfg(test)]
 pub use lib::create_test_packet::create_test_udp_packet;
+
 pub use lib::getipfields::{extract_ethernet_ip_fields, extract_ipv4_fields, extract_ipv6_fields};
 pub use lib::getpcapheader::extract_pcap_header_info;
 pub use lib::getprotocol::get_protocol_from_ip_header;

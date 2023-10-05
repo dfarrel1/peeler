@@ -1,11 +1,11 @@
+use base64::engine::general_purpose::STANDARD as BASE64;
+use base64::engine::Engine as _;
+use etherparse::TcpHeader;
 use serde_json::{json, Value};
 use std::error::Error;
-// use etherparse::{TcpHeader, TcpHeaderSlice};
-use base64::encode;
-use etherparse::TcpHeader;
 
 pub fn extract_tcp_fields(tcp_header: &TcpHeader, payload: &[u8]) -> Result<Value, Box<dyn Error>> {
-    let tcp_data_encoded = encode(payload); // Encode the tcp_data to Base64
+    let tcp_data_encoded = BASE64.encode(payload); // Encode the tcp_data to Base64
 
     let tcp_fields = json!({
         "src_port": tcp_header.source_port,
