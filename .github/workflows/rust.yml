@@ -50,7 +50,7 @@ jobs:
     - name: Install libpcap
       run: sudo apt-get install libpcap-dev libcap-dev
     - name: Build
-      run: cargo build --target=x86_64-unknown-linux-gnu --features "static_linking" --release
+      run: cargo build --target=x86_64-unknown-linux-gnu --features "static_linking" --release --verbose
     - name: Run tests
       run: cargo test --verbose -- --nocapture
       
