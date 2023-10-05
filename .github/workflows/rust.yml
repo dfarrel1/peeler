@@ -52,7 +52,7 @@ jobs:
     - name: Build
       run: cargo build --target=x86_64-unknown-linux-gnu --features "static_linking" --release --verbose
     - name: Examine Statically Linked Binary
-      run: ldd target/x86_64-unknown-linux-gnu/release/mind      
+      run: ldd target/x86_64-unknown-linux-gnu/release/peeler      
     - name: Run tests
       run: cargo test --verbose -- --nocapture
       
